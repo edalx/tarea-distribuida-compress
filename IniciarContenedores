@@ -1,0 +1,76 @@
+#Descripción Servidores
+Servidor:	Nombre		Puerto
+---------------------------------------------
+MYSQL: 		mysqldb		3306
+rabbitmq:	rabbitmq	5672
+eureka:		registro	8761
+config-server	config		8888
+zuul:		gateway		8000
+ms1:		instrumentos	8083
+ms2:		artistas	8084
+
+
+
+#Puerto administración RabbitMq
+http://rabbitmq:15672
+user: guest
+password: guest
+
+
+
+***************	BASE DE DATOS	***************
+#MYSQL
+docker run -d --rm --name=mysqldb -e MYSQL_ROOT_PASSWORD='' -e MYSQL_DATABASE='singers_db'  -e MYSQL_USER='edalx' -e MYSQL_PASSWORD='pa$word007' -e MYSQL_ALLOW_EMPTY_PASSWORD='yes' --network=eacuji.com mysql
+
+
+
+***************	BASE DE DATOS	***************
+#RabbitMQ
+docker run -d --rm --hostname my-rabbit --network eacuji.com --name rabbitmq -p 15672:15672 rabbitmq:3-management
+
+
+
+***************	CONFIG SERVER	***************
+#Construir imagen config-server
+docker build -t edalx/config-server .
+
+#RUN JAR config-server
+sudo docker run -d --network eacuji.com --name config edalx/config-server
+
+
+
+***************	REGISTRO	***************
+#Construir imagen registro
+docker build -t edalx/registro .
+
+#RUN JAR REGISTRO
+sudo docker run -d --network eacuji.com --name registro edalx/registro
+
+
+
+***************	MICROSERVICIO SINGER	***************
+#Construir imagen microservicio singer
+docker build -t edalx/artistas .
+
+#RUN JAR MICROSERVICIO SINGER
+sudo docker run -d --network eacuji.com --name artistas  edalx/artistas
+
+
+
+***************	MICROSERVICIO INSTRUMENTOS ***************
+#Construir imagen microservicio instrumentos
+docker build -t edalx/instrumentos .
+
+#RUN JAR MICROSERVICIO INSTRUMENTOS
+sudo docker run -d --network eacuji.com --name instrumentos  edalx/instrumentos
+
+
+
+***************	GATEWAY		***************
+#Construir imagen gateway
+docker build -t edalx/gateway .
+
+#RUN JAR MICROSERVICIO GATEWAY
+sudo docker run -d --network eacuji.com --name gateway  -p 8000:8000 edalx/gateway
+
+
